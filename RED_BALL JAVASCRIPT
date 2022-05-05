@@ -1,0 +1,76 @@
+let ball_x, ball_y,radius;
+let p1_key, p2_key;
+function setup(){
+    const canvas = document.getElementById("canvas");
+    ctx = canvas.getContext("2d");
+    ball_x = 200;
+    ball_y = 200;
+    radius = 100;
+
+    setInterval(loop,1000/60)
+}
+
+function loop(){
+
+    switch(p1_key){
+        case 37:
+            ball_x -= 5;
+            break;
+        case 38:
+            ball_y -= 5;
+            break;
+        case 39:
+            ball_x += 5;
+            break;
+        case 40:
+            ball_y += 5;
+            break;
+    }
+    p1_key = 9;
+    draw();
+}
+
+function draw(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawBall2();
+}
+
+function drawBall2(){
+    ctx.beginPath();
+    ctx.arc(ball_x, ball_y, radius, 0, 2 * Math.PI);
+    ctx.fillStyle = "red";
+    ctx.strokeStyle = "red";
+    ctx.fill();
+    ctx.stroke();
+}
+
+document.addEventListener("keydown",function(ev){
+    // keyCode 87 = w, keycode 83 = s
+    if(ev.keyCode == 87 || ev.keyCode == 83){
+        p1_key = ev.keyCode
+    }
+    // keycode 38 = arrowUp, keycode 40 = arrowDown
+    else if(ev.keyCode== 38 || ev.keyCode==40)
+        p2_key = ev.keyCode
+
+    switch(ev.keyCode){
+
+        case 37:
+            p1_key = ev.keyCode;
+            break;
+
+        case 38:
+            p1_key = ev.keyCode;
+            break;
+
+        case 39:
+            p1_key = ev.keyCode;
+            break;
+        
+        case 40:
+            p1_key = ev.keyCode;
+            break;
+    }
+})
+
+setup()
