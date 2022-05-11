@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+	<title>Futsal</title>
+	<meta charset="utf-8">
+</head>
+<!-- comando CSS para atribuir uma borda ao canvas -->
+<style>
+	canvas{
+		border: solid 1px;
+        margin-left: 40em;
+        margin-top: 10em;
+	}
+
+    html{
+        background-color: grey;
+    }
+
+    p{
+        color: black;
+        font-size: 30px;
+        font-family: 'Courier New', Courier, monospace;
+    }
+
+    div{
+        text-align: center;
+        background-color: bisque;
+        margin-left: 500px;
+        margin-right: 500px;
+    }
+</style>
+<body>
+	<div>
+        <p>Preto <strong class="black">0</strong></p>
+        <p>Vermelho <strong class="red">0</strong></p>
+    </div>
+	<canvas width="1200" height="600"></canvas>
+	<script>
+
+        const width = 1200;
+        const heigh = 600;
+        const sq_width = 50;
+        const sq_heigh = 50;
+
+		//Variáveis
+		//Código das setas do teclado
+		var UP = 38, DOWN = 40, LEFT = 37, RIGHT = 39;
+        var UP2 = 87, DOWN2 = 83, LEFT2 = 65, RIGHT2 = 68;
+        var grud_dir1 = 0, grud_esq1 = 0 , grud_cima1 = 0, grud_baixo1 = 0, golsBlack = 0; 
+        var grud_dir2 = 0, grud_esq2 = 0 , grud_cima2 = 0, grud_baixo2 = 0, golsRed = 0; 
+        var contxp = 0, contxn = 0, contyp = 0, contyn = 0 ,mov_ball = 0, ball_flag = 0;
+		//Variáveis de movimentação
+		var moveEsquerda = false, moveDireita = false, moveCima = false, moveBaixo = false;
+        var moveEsquerda2 = false, moveDireita2 = false, moveCima2 = false, moveBaixo2 = false;
+		//Referência ao canvas
+		var cnv = document.querySelector("canvas");
+		//dispositivo através do qual desenhamos no canvas
+		var ctx = cnv.getContext("2d");
+		
+
+        var p1x = 200, p1y = 200;
+        var p2x = 900, p2y = 200;
+        var bolax = 550,bolay = 300;
+
+        const black = document.querySelector('.black');
+        const red = document.querySelector('.red');
+
+		update();
+
+		
+		window.addEventListener("keydown",keydownHandler);
+		
+		window.addEventListener("keyup",keyupHandler);
+
+		
+		function keydownHandler(e){
+			//Variável recebe o código da tecla pressionada
+			var key = e.keyCode;
+			
+			if(key === LEFT && key !== RIGHT){
+				moveEsquerda = true;
+			}
+			
+			if(key === RIGHT && key !== LEFT){
+				moveDireita = true;
+			}
+			
+			if(key === UP && key !== DOWN){
+				moveCima = true;
+			}
+			
+			if(key === DOWN && key !== UP){
+				moveBaixo = true;
+			}
+
+            if(key === LEFT2 && key !== RIGHT2){
+                moveEsquerda2 = true;
+            }
+
+            if(key === RIGHT2 && key !== LEFT2){
+				moveDireita2 = true;
+			}
+			
+			if(key === UP2 && key !== DOWN2){
+				moveCima2 = true;
+			}
+			
+			if(key === DOWN2 && key !== UP2){
+				moveBaixo2 = true;
+			}
+		}
+
+		//Evento disparado pela tecla liberada
+		function keyupHandler(e){
+			
+			var key = e.keyCode;
+			
+			if(key === LEFT && key !== RIGHT){
+				moveEsquerda = false;
+			}
+			
+			if(key === RIGHT && key !== LEFT){
+				moveDireita = false;
+			}
+			
+			if(key === UP && key !== DOWN){
+				moveCima = false;
+			}
+			
+			if(key === DOWN && key !== UP){
+				moveBaixo = false;
+			}
+//------------------------------------------------
+            if(key === LEFT2 && key !== RIGHT2){
+				moveEsquerda2 = false;
+			}
+			
+			if(key === RIGHT2 && key !== LEFT2){
+				moveDireita2 = false;
+			}
+			
+			if(key === UP2 && key !== DOWN2){
+				moveCima2 = false;
+			}
+			
+			if(key === DOWN2 && key !== UP2){
+				moveBaixo2 = false;
+			}
+		}
+
+		
+		function move(){
+			
+			if(moveEsquerda){
+                
+                if(p1x - 50 <= p2x && p1y + 50 > p2y && p1y -50 < p2y){
+                    
+                    grud_esq1 = 1;
+                    if(grud_dir1 == 1 || p1x < p2x -50){
+                        
+                        p1x -= 10;
+                    }
+                }else{
+                   p1x -= 10;
+                   grud_dir1 = 0; 
+                }
+
+                if(p1x < -45){
+                    p1x = -45;
+                }
+
+                if(p1x < bolax + 20 && p1y +50 > bolay && p1y - 30 < bolay && p1x > bolax){
+                    contxn = -6;
+                    ball_flag = 1;
+                    bolax = p1x - 40;
+                }
+                
+			}
+			
+			if(moveDireita){
+                
+                if(p1x + 50 >= p2x && p1y +50 > p2y && p1y - 50 < p2y){
+                    
+                    grud_dir1 = 1;
+                    if(grud_esq1 == 1 || p1x > p2x +50){
+                        p1x += 10;
+                    }
+                }else{
+                    p1x += 10;
+                    grud_esq1 = 0; 
+                }
+                
+                if(p1x > width - sq_width + 45){
+                    p1x = width - sq_width + 45;
+                }
+
+                if(p1x + 50 > bolax && p1y +50 > bolay && p1y - 30 < bolay && p1x < bolax){
+                    contxp = 6;
+                    ball_flag = 1;
+                    bolax = p1x + 51;
+                }
+
+			}
+			
+			if(moveCima){
+                if(p1y - 50 <= p2y && p1x +50 > p2x && p1x - 50 < p2x){
+                    grud_cima1 = 1;
+                    if(grud_baixo1 == 1 || p1y < p2y -50){
+                        p1y -= 10;
+                    }
+                }else{
+                    p1y -= 10;
+                    grud_baixo1 = 0;
+                }
+
+                if(p1y < -45){
+                    p1y = -45;
+                }
+
+                if(p1y < bolay + 20 && p1x  < bolax +20 && p1x +50 > bolax && p1y > bolay){
+                    contyn = -6;
+                    ball_flag = 1;
+                    bolay = p1y - 40;
+                }
+                
+			}
+			
+			if(moveBaixo){
+                if(p1y + 50 >= p2y && p1x +50 > p2x && p1x - 50 < p2x){
+                    grud_baixo1 = 1;
+                    if(grud_cima1 == 1 || p1y > p2y +50){
+                        p1y += 10;
+                    }
+                }else{
+                    p1y += 10;
+                    grud_cima1 = 0;
+                }
+
+                if(p1y > heigh - sq_heigh +45){
+                    p1y = heigh - sq_heigh +45;
+                }
+
+                if(p1y + 50 > bolay && p1x  < bolax +20 && p1x +50 > bolax && p1y < bolay){
+                    contyp = 6;
+                    ball_flag = 1;
+                    bolay = p1y + 51;
+                }
+			}
+
+            
+
+//----------------------------------------
+
+            if(moveEsquerda2){
+                
+                if(p2x - 50 <= p1x && p2y + 50 > p1y && p2y -50 < p1y){
+                    
+                    grud_esq2 = 1;
+                    if(grud_dir2 == 1 || p2x < p1x -50){
+                        p2x -= 10;
+                    }
+                }else{
+                   p2x -= 10;
+                   grud_dir2 = 0; 
+                }
+                
+                if(p2x < -45){
+                    p2x = -45;
+                }
+
+                if(p2x < bolax + 20 && p2y +50 > bolay && p2y - 30 < bolay && p2x > bolax){
+                    contxn = -6;
+                    ball_flag = 1;
+                    bolax = p2x - 40;
+                }
+			}
+			
+			if(moveDireita2){
+                
+                if(p2x + 50 >= p1x && p2y +50 > p1y && p2y - 50 < p1y){
+                    
+                    grud_dir2 = 1;
+                    if(grud_esq2 == 1 || p2x > p1x +50){
+                        p2x += 10;
+                    }
+                }else{
+                    p2x += 10;
+                    grud_esq2 = 0; 
+                }
+                
+                if(p2x > width - sq_width + 45){
+                    p2x = width - sq_width + 45;
+                }
+
+                if(p2x + 50 > bolax && p2y +50 > bolay && p2y - 30 < bolay && p2x < bolax){
+                    contxp = 6;
+                    ball_flag = 1;
+                    bolax = p2x + 51;
+                }
+                
+			}
+			
+			if(moveCima2){
+                if(p2y - 50 <= p1y && p2x +50 > p1x && p2x - 50 < p1x){
+                    grud_cima2 = 1;
+                    if(grud_baixo2 == 1 || p2y < p1y -50){
+                        p2y -= 10;
+                    }
+                }else{
+                    p2y -= 10;
+                    grud_baixo2 = 0;
+                }
+
+                if(p2y < -45){
+                    p2y = -45;
+                }
+
+                if(p2y < bolay + 20 && p2x  < bolax +20 && p2x +50 > bolax && p2y > bolay){
+                    contyn = -6;
+                    ball_flag = 1;
+                    bolay = p2y - 40;
+                }
+                
+			}
+			
+			if(moveBaixo2){
+                if(p2y + 50 >= p1y && p2x +50 > p1x && p2x - 50 < p1x){
+                    grud_baixo2 = 1;
+                    if(grud_cima2 == 1 || p2y > p1y +50){
+                        p2y += 10;
+                    }
+                }else{
+                    p2y += 10;
+                    grud_cima2 = 0;
+                }
+
+
+                if(p2y > heigh - sq_heigh +45){
+                    p2y = heigh - sq_heigh +45;
+                }
+
+                
+
+                if(p2y + 50 > bolay && p2x  < bolax +20 && p2x +50 > bolax && p2y < bolay){
+                    contyp = 6;
+                    ball_flag = 1;
+                    bolay = p2y + 51;
+                }
+			}
+            
+            
+
+            if(contxp > 5 && contxp < 20){
+                //console.log(contxp);
+                if(ball_flag == 1){
+                    contxp++;
+                }else{
+                    contxp--;
+                }
+                
+                bolax += contxp;
+
+                if(contxp > 10){
+                    ball_flag = 0;
+                }
+            }
+
+            if(contxn > -20 && contxn < -5){
+                //console.log(contxn);
+                if(ball_flag == 1){
+                    contxn--;
+                }else{
+                    contxn++;
+                }
+                bolax += contxn;
+                if(contxn < -10){
+                    ball_flag = 0;
+                }
+            }
+
+            if(contyn > -20 && contyn < -5){
+                //console.log(contyn);
+                if(ball_flag == 1){
+                    contyn--;
+                }else{
+                    contyn++;
+                }
+                bolay += contyn;
+                if(contyn < -10){
+                    ball_flag = 0;
+                }
+            }
+
+            if(contyp > 5 && contyp < 20){
+                //console.log(contyp);
+                if(ball_flag == 1){
+                    contyp++;
+                }else{
+                    contyp--;
+                }
+                
+                bolay += contyp;
+
+                if(contyp > 10){
+                    ball_flag = 0;
+                }
+            }
+
+            
+
+            if(bolax >= width - 40 && bolay > 200 && bolay < 400){
+                p1x = 200;
+                p1y = 200;
+                p2x = 900;
+                p2y = 200;
+                bolax = 550;
+                bolax = 300;
+                console.log("gol");
+                golsBlack++;
+                black.innerHTML = golsBlack;
+            }else if(bolax >= width - 40){
+                bolax = width - 40;
+            }
+
+            if(bolax < 20 && bolay > 200 && bolay < 400){
+                p1x = 200;
+                p1y = 200;
+                p2x = 900;
+                p2y = 200;
+                bolax = 550;
+                bolax = 300;
+                console.log("gol");
+                golsRed++;
+               red.innerHTML = golsRed;
+            }else if(bolax < 20){
+                bolax = 20;
+            }
+
+            if(bolay >= heigh - 40 ){
+                bolay = heigh - 40;
+            }
+
+            if(bolay < 20 ){
+                bolay = 20;
+            }
+
+            //----------------------------------------------------
+
+
+		}
+
+		
+		function render(){
+			//Limpa a tela
+			ctx.clearRect(0,0,cnv.width,cnv.height);
+	
+            ctx.strokeStyle = 'black';
+            ctx.strokeRect(20,20,width - 40,heigh - 40);
+            ctx.fillStyle = "#013220";
+            ctx.fillRect(0,200,20,200);
+            ctx.fillRect(width-20,200,20,200);
+            ctx.fillStyle = 'black';
+			ctx.fillRect(p1x,p1y,50,50);
+            ctx.fillStyle = 'red';
+            ctx.fillRect(p2x,p2y,50,50);
+            ctx.fillStyle = 'white';
+            ctx.fillRect(bolax,bolay,20,20);
+		}
+
+		//Loop de animação
+		function update(){
+			//Solicita ao navegador uma animação passando a função e o elemento a ser animado
+			requestAnimationFrame(update, cnv);
+			
+			move();
+			
+			render();
+		}
+	</script>
+</body>
+</html>
