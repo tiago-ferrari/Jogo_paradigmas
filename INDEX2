@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index2</title>
+</head>
+<style>
+	canvas{
+		border: solid 1px;
+        margin-top: 0em;
+        margin-left: 6em;
+        
+	}
+
+    p{
+        color: black;
+        font-size: 30px;
+        font-family: 'Courier New', Courier, monospace;
+    }
+
+    div{
+        text-align: center;
+        background-color: bisque;
+        margin-left: 500px;
+        margin-right: 500px;
+    }
+
+</style>
+<body>
+    <div>
+        <p>Pontos: <strong class="pontos">0</strong></p>
+        <p>P1x: <strong class="p1x">0</strong></p>
+        <p>P1y: <strong class="p1y">0</strong></p>
+    </div>
+    <canvas width="1200" height="600"></canvas>
+    <script>
+        var UP = 38, DOWN = 40, LEFT = 37, RIGHT = 39;
+        var moveEsquerda = false, moveDireita = false, moveCima = false, moveBaixo = false;
+        var cnv = document.querySelector("canvas");
+        var ctx = cnv.getContext("2d");
+
+        var p1x = 200, p1y = 200;
+        var prx = 500;
+        var pry = 200;
+
+        const px = document.querySelector('.p1x');
+        const py = document.querySelector('.p1y');
+
+        update();
+
+        window.addEventListener("keydown",keydownHandler);
+
+        window.addEventListener("keyup",keyupHandler);
+
+        function keydownHandler(e){
+            
+			var key = e.keyCode;
+			
+			if(key === LEFT && key !== RIGHT){
+				moveEsquerda = true;
+			}
+			
+			if(key === RIGHT && key !== LEFT){
+				moveDireita = true;
+			}
+			
+			if(key === UP && key !== DOWN){
+				moveCima = true;
+			}
+			
+			if(key === DOWN && key !== UP){
+				moveBaixo = true;
+			}
+
+		}
+
+		function keyupHandler(e){
+			
+			var key = e.keyCode;
+			
+			if(key === LEFT && key !== RIGHT){
+				moveEsquerda = false;
+			}
+			
+			if(key === RIGHT && key !== LEFT){
+				moveDireita = false;
+			}
+			
+			if(key === UP && key !== DOWN){
+				moveCima = false;
+			}
+			
+			if(key === DOWN && key !== UP){
+				moveBaixo = false;
+			}
+            
+		}
+
+        function update(){
+            
+            requestAnimationFrame(update, cnv);
+            px.innerHTML = p1x;
+            py.innerHTML = p1y;    
+            move();
+            redGenerator();
+            render();
+        }
+
+        function redGenerator(){
+            let rng = Math.floor((Math.random() * 2));
+            collected = 0;
+            if(rng != 1 || collected != 1)
+                return;
+            
+            //collected = 0;
+            //let prx = Math.floor((Math.random() * 1200) + 1);
+            //let pry = Math.floor((Math.random() * 600) + 1);
+            prx = 500;
+            pry = 400;
+
+        }
+
+        function collision(){
+
+            if(p1x >= prx && p1y >= pry - 50 && p1y <= pry + 20 ){
+                console.log("colisao");
+            }
+
+            
+
+        }
+
+        function render(){
+			//Limpa a tela
+			ctx.clearRect(0,0,cnv.width,cnv.height);
+            
+            ctx.fillStyle = 'black';
+			ctx.fillRect(p1x,p1y,50,50);
+
+            ctx.fillStyle = 'red';
+			ctx.fillRect(prx,pry,20,20);
+
+            collision();
+            
+		}
+
+        function move(){
+
+			if(moveCima){
+                p1y -= 5;
+            }
+
+			if(moveEsquerda){
+                p1x -= 5;
+            }
+
+            if(moveDireita){
+                p1x += 5;
+            }
+
+            if(moveBaixo){
+                p1y += 5;
+            }
+
+            
+
+		}
+
+    </script>
+    
+</body>
+</html>
