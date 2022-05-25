@@ -63,8 +63,7 @@
             width: 20,
             height: 20
         };
-        //var prx = 500;
-        //var pry = 200;
+        
         var collected = 1;
         var cont = -1;
         const px = document.querySelector('.p1x');
@@ -133,8 +132,6 @@
         }
 
         function redGenerator(){
-            //let rng = Math.floor((Math.random() * 2));
-            //collected = 0;
             if(collected == 0)
                 return;
             
@@ -142,8 +139,6 @@
             cont++;
             ball.x = Math.floor((Math.random() * 1000) + 1);
             ball.y = Math.floor((Math.random() * 350) + 1);
-            //prx = 500;
-            //pry = 400;
 
         }
 
