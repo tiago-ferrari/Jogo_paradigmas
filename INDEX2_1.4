@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index2</title>
+</head>
+<style>
+
+    html{
+        background-color: grey;
+    }
+
+	canvas{
+		border: solid 1px;
+        margin-top: 0em;
+        margin-left: 6em;
+        
+	}
+
+    p{
+        color: black;
+        font-size: 30px;
+        font-family: 'Courier New', Courier, monospace;
+    }
+
+    div{
+        text-align: center;
+        background-color: bisque;
+        margin-left: 500px;
+        margin-right: 500px;
+    }
+
+</style>
+<body>
+    <div>
+        <p>Pontos: <strong class="pontos">0</strong></p>
+        <p>P1x: <strong class="p1x">0</strong></p>
+        <p>P1y: <strong class="p1y">0</strong></p>
+    </div>
+    <canvas width="2200" height="550"></canvas>
+    <script>
+        var canv = {
+            width: 2200,
+            height: 550
+        };
+
+        var UP = 38, DOWN = 40, LEFT = 37, RIGHT = 39;
+        var UP2 = 87, DOWN2 = 83, LEFT2 = 65, RIGHT2 = 68;
+        var moveEsquerda = false, moveDireita = false, moveCima = false, moveBaixo = false;
+        var moveEsquerda2 = false, moveDireita2 = false, moveCima2 = false, moveBaixo2 = false;
+        var cnv = document.querySelector("canvas");
+        var ctx = cnv.getContext("2d");
+        var p1 = {
+            x: 200,
+            y: 200,
+            width: 50,
+            height: 50,
+            speed: 10
+        };
+
+        var p2 = {
+            x: 300,
+            y: 200,
+            width: 50,
+            height: 50,
+            speed: 20
+        };
+        
+        var ball = {
+            x: 500,
+            y: 500,
+            width: 20,
+            height: 20
+        };
+
+
+        
+        var collected = 1;
+        var cont = -1;
+        const px = document.querySelector('.p1x');
+        const py = document.querySelector('.p1y');
+        const pontos = document.querySelector('.pontos');
+
+        update();
+
+        window.addEventListener("keydown",keydownHandler);
+
+        window.addEventListener("keyup",keyupHandler);
+
+        function keydownHandler(e){
+            
+			var key = e.keyCode;
+			
+			if(key === LEFT && key !== RIGHT){
+				moveEsquerda = true;
+			}
+			
+			if(key === RIGHT && key !== LEFT){
+				moveDireita = true;
+			}
+			
+			if(key === UP && key !== DOWN){
+				moveCima = true;
+			}
+			
+			if(key === DOWN && key !== UP){
+				moveBaixo = true;
+			}
+
+            if(key === LEFT2 && key !== RIGHT2){
+                moveEsquerda2 = true;
+            }
+
+            if(key === RIGHT2 && key !== LEFT2){
+				moveDireita2 = true;
+			}
+			
+			if(key === UP2 && key !== DOWN2){
+				moveCima2 = true;
+			}
+			
+			if(key === DOWN2 && key !== UP2){
+				moveBaixo2 = true;
+			}
+		}
+
+		
+
+		function keyupHandler(e){
+			
+			var key = e.keyCode;
+			
+			if(key === LEFT && key !== RIGHT){
+				moveEsquerda = false;
+			}
+			
+			if(key === RIGHT && key !== LEFT){
+				moveDireita = false;
+			}
+			
+			if(key === UP && key !== DOWN){
+				moveCima = false;
+			}
+			
+			if(key === DOWN && key !== UP){
+				moveBaixo = false;
+			}
+//----------------------------------------------------
+            if(key === LEFT2 && key !== RIGHT2){
+				moveEsquerda2 = false;
+			}
+			
+			if(key === RIGHT2 && key !== LEFT2){
+				moveDireita2 = false;
+			}
+			
+			if(key === UP2 && key !== DOWN2){
+				moveCima2 = false;
+			}
+			
+			if(key === DOWN2 && key !== UP2){
+				moveBaixo2 = false;
+			}
+            
+		}
+
+        function update(){
+            
+            requestAnimationFrame(update, cnv);
+            px.innerHTML = p1.x;
+            py.innerHTML = p1.y;
+            pontos.innerHTML = cont;    
+            move();
+            redGenerator();
+            render();
+        }
+
+        function redGenerator(){
+            
+            
+        }
+
+        function collision(){
+            //p1.x + p1.width >= ball.x && p1.y >= ball.y - p1.height &&
+            //p1.y <= ball.y + ball.height  && p1.x < ball.x + ball.width
+
+            if(p1.x + p1.width >= ball.x && p1.y >= ball.y - p1.height &&
+            p1.y <= ball.y + ball.height  && p1.x < ball.x + ball.width){
+
+                if(moveEsquerda){
+                    ball.x -= 10;
+                }
+
+                if(moveDireita){
+                    ball.x += 10;
+                }
+
+                if(moveCima){
+                    ball.y -= 10;
+                }
+
+                if(moveBaixo){
+                    ball.y += 10;
+                }
+                
+            }
+
+            if(p1.x > canv.width - p1.width){
+                p1.x = canv.width - p1.width;
+            }
+
+            if(p1.x < 0){
+                p1.x = 0;
+            }
+
+            if(p1.y > canv.height - p1.height){
+                p1.y = canv.height - p1.height;
+            }
+
+            if(p1.y < 0){
+                p1.y = 0;
+            }
+
+            
+
+        }
+
+        function render(){
+			//Limpa a tela
+			ctx.clearRect(0,0,cnv.width,cnv.height);
+            
+            ctx.fillStyle = 'black';
+			ctx.fillRect(p1.x,p1.y,p1.width,p1.height);
+
+            ctx.fillStyle = 'white';
+			ctx.fillRect(ball.x,ball.y,ball.width,ball.height);
+
+            ctx.fillStyle = 'red';
+			ctx.fillRect(p2.x,p2.y,p2.width,p2.height);
+
+            redGenerator();
+            collision();
+            
+		}
+
+        function move(){
+
+			if(moveCima){
+                p1.y -= p1.speed;
+                //10
+            }
+
+			if(moveEsquerda){
+                p1.x -= p1.speed;
+            }
+
+            if(moveDireita){
+                p1.x += p1.speed;
+            }
+
+            if(moveBaixo){
+                p1.y += p1.speed;
+            }
+
+            
+
+		}
+
+    </script>
+    
+</body>
+</html>
