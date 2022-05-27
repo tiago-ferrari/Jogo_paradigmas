@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index2</title>
+</head>
+<style>
+
+    html{
+        background-color: grey;
+    }
+
+	canvas{
+		border: solid 1px;
+        margin-top: 0em;
+        margin-left: 6em;
+        
+	}
+
+    p{
+        color: black;
+        font-size: 30px;
+        font-family: 'Courier New', Courier, monospace;
+    }
+
+    div{
+        text-align: center;
+        background-color: bisque;
+        margin-left: 500px;
+        margin-right: 500px;
+    }
+
+</style>
+<body>
+    <div>
+        <p>Preto: <strong class="black">0</strong></p>
+        <p>Vermelho: <strong class="red">0</strong></p>
+    </div>
+    <canvas width="1200" height="600"></canvas>
+    <script>
+        var canv = {
+            width: 1200,
+            height: 600,
+            rect: 20,
+            goal_margin: 200,           // goal + (goal_margin * 2) PRECISA SER IGUAL A canv.height
+            goal: 200,
+            black_count: 0,
+            red_count: 0
+        };
+
+        var UP = 38, DOWN = 40, LEFT = 37, RIGHT = 39;
+        var UP2 = 87, DOWN2 = 83, LEFT2 = 65, RIGHT2 = 68;
+        var moveEsquerda = false, moveDireita = false, moveCima = false, moveBaixo = false;
+        var moveEsquerda2 = false, moveDireita2 = false, moveCima2 = false, moveBaixo2 = false;
+        var cnv = document.querySelector("canvas");
+        var ctx = cnv.getContext("2d");
+        var p1 = {
+            x: 1100,                    // x PODE SER canv.width - 100
+            y: 275,                     // y PODE SER (canv.height/2) - (p1.widht/2)
+            x_old: 0,
+            y_old: 0,
+            x_start: 1100,
+            y_start: 275,
+            barrier: 35,
+            width: 50,
+            height: 50,
+            speed: 10
+        };
+
+        var p2 = {
+            x: 50,
+            y: 275,
+            x_old: 0,
+            y_old: 0,
+            x_start: 50,
+            y_start: 275,
+            barrier: 35,
+            width: 50,
+            height: 50,
+            speed: 10
+        };
+        
+        var ball = {
+            x: 600,
+            y: 290,
+            x_start: 600,
+            y_start: 290,
+            barrier: -20,
+            width: 20,
+            height: 20,
+            speed: 0,
+            touch_speed: 6,
+            speed_limit: 11,
+            left_collision: false,
+            right_collision: false,
+            up_collision: false,
+            down_collision: false,
+            direc: 0
+        };
+
+        const black = document.querySelector('.black');
+        const red = document.querySelector('.red');
+        //const pontos = document.querySelector('.pontos');
+
+        update();
+
+        window.addEventListener("keydown",keydownHandler);
+
+        window.addEventListener("keyup",keyupHandler);
+
+        function keydownHandler(e){
+            
+			var key = e.keyCode;
+			
+			if(key === LEFT && key !== RIGHT){
+				moveEsquerda = true;
+			}
+			
+			if(key === RIGHT && key !== LEFT){
+				moveDireita = true;
+			}
+			
+			if(key === UP && key !== DOWN){
+				moveCima = true;
+			}
+			
+			if(key === DOWN && key !== UP){
+				moveBaixo = true;
+			}
+
+            if(key === LEFT2 && key !== RIGHT2){
+                moveEsquerda2 = true;
+            }
+
+            if(key === RIGHT2 && key !== LEFT2){
+				moveDireita2 = true;
+			}
+			
+			if(key === UP2 && key !== DOWN2){
+				moveCima2 = true;
+			}
+			
+			if(key === DOWN2 && key !== UP2){
+				moveBaixo2 = true;
+			}
+		}
+
+		
+		function keyupHandler(e){
+			
+			var key = e.keyCode;
+			
+			if(key === LEFT && key !== RIGHT){
+				moveEsquerda = false;
+			}
+			
+			if(key === RIGHT && key !== LEFT){
+				moveDireita = false;
+			}
+			
+			if(key === UP && key !== DOWN){
+				moveCima = false;
+			}
+			
+			if(key === DOWN && key !== UP){
+				moveBaixo = false;
+			}
+//----------------------------------------------------
+            if(key === LEFT2 && key !== RIGHT2){
+				moveEsquerda2 = false;
+			}
+			
+			if(key === RIGHT2 && key !== LEFT2){
+				moveDireita2 = false;
+			}
+			
+			if(key === UP2 && key !== DOWN2){
+				moveCima2 = false;
+			}
+			
+			if(key === DOWN2 && key !== UP2){
+				moveBaixo2 = false;
+			}
+            
+		}
+
+        function update(){
+            
+            requestAnimationFrame(update, cnv);
+            black.innerHTML = canv.black_count;
+            red.innerHTML = canv.red_count;
+            //pontos.innerHTML = cont;    
+            move();
+            redGenerator();
+            render();
+        }
+
+        function redGenerator(){
+            
+            
+        }
+
+        function collision(){
+            //p1.x + p1.width >= ball.x && p1.y >= ball.y - p1.height &&
+            //p1.y <= ball.y + ball.height  && p1.x < ball.x + ball.width
+
+            if(p1.x + p1.width >= ball.x && p1.y >= ball.y - p1.height &&
+            p1.y <= ball.y + ball.height  && p1.x < ball.x + ball.width){
+
+                if(moveEsquerda){
+                    ball.left_collision = true;
+                    ball.x = p1.x - ball.width;
+                    ball.speed = -ball.touch_speed;
+                    ball.direc = -1;
+                }
+
+                if(moveDireita){
+                    ball.right_collision = true;
+                    ball.x = p1.x + p1.width;
+                    ball.speed = ball.touch_speed;
+                    ball.direc = 1;
+                }
+
+                if(moveCima){
+                    ball.up_collision = true;
+                    ball.y = p1.y - ball.height;
+                    ball.speed = -ball.touch_speed;
+                    ball.direc = -1;
+                }
+
+                if(moveBaixo){
+                    ball.down_collision = true;
+                    ball.y = p1.y + p1.height;
+                    ball.speed = ball.touch_speed;
+                    ball.direc = 1;
+                }
+            }
+
+            if(p1.x > canv.width - p1.width + p1.barrier){
+                p1.x = canv.width - p1.width + p1.barrier;
+            }
+
+            if(p1.x < - p1.barrier){
+                p1.x = - p1.barrier;
+            }
+
+            if(p1.y > canv.height - p1.height + p1.barrier){
+                p1.y = canv.height - p1.height + p1.barrier;
+            }
+
+            if(p1.y < 0 - p1.barrier){
+                p1.y = 0 - p1.barrier;
+            }
+
+            if(p1.x + p1.width >= p2.x && p1.y >= p2.y - p1.height &&
+            p1.y <= p2.y + p2.height  && p1.x < p2.x + p2.width){
+
+                if(moveEsquerda){
+                    p1.x = p1.x_old
+                }
+
+                if(moveDireita){
+                    p1.x = p1.x_old
+                }
+
+                if(moveCima){
+                    p1.y = p1.y_old
+                }
+
+                if(moveBaixo){
+                    p1.y = p1.y_old
+                }
+            }
+//-----------------------------------------------------------
+
+            if(p2.x + p2.width >= ball.x && p2.y >= ball.y - p2.height &&
+                p2.y <= ball.y + ball.height  && p2.x < ball.x + ball.width){
+
+                if(moveEsquerda2){
+                    ball.left_collision = true;
+                    ball.x = p2.x - ball.width;
+                    ball.speed = -ball.touch_speed;
+                    ball.direc = -1;
+                }
+
+                if(moveDireita2){
+                    ball.right_collision = true;
+                    ball.x = p2.x + p2.width;
+                    ball.speed = ball.touch_speed;
+                    ball.direc = 1;
+                }
+
+                if(moveCima2){
+                    ball.up_collision = true;
+                    ball.y = p2.y - ball.height;
+                    ball.speed = -ball.touch_speed;
+                    ball.direc = -1;
+                }
+
+                if(moveBaixo2){
+                    ball.down_collision = true;
+                    ball.y = p2.y + p2.height;
+                    ball.speed = ball.touch_speed;
+                    ball.direc = 1;
+                }
+            }
+
+            if(p2.x > canv.width - p2.width + p2.barrier){
+                p2.x = canv.width - p2.width + p2.barrier;
+            }
+
+            if(p2.x < - p2.barrier){
+                p2.x = - p2.barrier;
+            }
+
+            if(p2.y > canv.height - p2.height + p2.barrier){
+                p2.y = canv.height - p2.height + p2.barrier;
+            }
+
+            if(p2.y < - p2.barrier){
+                p2.y = - p2.barrier;
+            }
+
+            if(p2.x + p2.width >= p1.x && p2.y >= p1.y - p2.height &&
+            p2.y <= p1.y + p1.height  && p2.x < p1.x + p1.width){
+
+                if(moveEsquerda2){
+                    p2.x = p2.x_old
+                }
+
+                if(moveDireita2){
+                    p2.x = p2.x_old
+                }
+
+                if(moveCima2){
+                    p2.y = p2.y_old
+                }
+
+                if(moveBaixo2){
+                    p2.y = p2.y_old
+                }
+            }
+
+            if(ball.x > canv.width - ball.width + ball.barrier){
+                ball.x = canv.width - ball.width + ball.barrier;
+            }
+
+            if(ball.x < - ball.barrier){
+                ball.x = - ball.barrier;
+            }
+
+            if(ball.y > canv.height - ball.height + ball.barrier){
+                ball.y = canv.height - ball.height + ball.barrier;
+            }
+
+            if(ball.y < - ball.barrier){
+                ball.y = - ball.barrier;
+            }
+
+//---------------------------------------------------------------------
+
+            if(ball.left_collision){
+                if(ball.speed < -ball.touch_speed + 1){
+                    ball.x += ball.speed;
+                    ball.speed += ball.direc;
+                    if(ball.speed == -ball.speed_limit){
+                        ball.direc = +1;
+                    }
+                }else{
+                    ball.left_collision = 0;
+                }
+            }
+
+            if(ball.right_collision){
+                if(ball.speed > ball.touch_speed - 1){
+                    ball.x += ball.speed;
+                    ball.speed += ball.direc;
+                    if(ball.speed == ball.speed_limit){
+                        ball.direc = -1;
+                    }
+                }else{
+                    ball.right_collision = 0;
+                }
+            }
+
+            if(ball.up_collision){
+                if(ball.speed < -ball.touch_speed + 1){
+                    ball.y += ball.speed;
+                    ball.speed += ball.direc;
+                    if(ball.speed == -ball.speed_limit){
+                        ball.direc = +1;
+                    }
+                }else{
+                    ball.up_collision = 0;
+                }
+            }
+
+            if(ball.down_collision){
+                if(ball.speed > ball.touch_speed - 1){
+                    ball.y += ball.speed;
+                    ball.speed += ball.direc;
+                    if(ball.speed == ball.speed_limit){
+                        ball.direc = -1;
+                    }
+                }else{
+                    ball.down_collision = 0;
+                }
+            }
+
+            if(ball.x < canv.rect && ball.y > canv.goal_margin + 1 && ball.y < canv.height - canv.goal_margin -1 && 
+                ball.y + ball.height > canv.goal_margin + 1 && ball.y + ball.height < canv.height - canv.goal_margin -1){
+
+                canv.red_count++;
+                p1.x = p1.x_start;
+                p1.y = p1.y_start;
+                p2.x = p2.x_start;
+                p2.y = p2.y_start;
+                ball.x = ball.x_start;
+                ball.y = ball.y_start;
+                ball.left_collision = ball.right_collision = ball.up_collision = ball.down_collision = false;
+                ball.speed = 0;
+            }
+
+            if(ball.x > canv.width - canv.rect * 2 && ball.y > canv.goal_margin + 1 && ball.y < canv.height - canv.goal_margin -1 && 
+                ball.y + ball.height > canv.goal_margin + 1 && ball.y + ball.height < canv.height - canv.goal_margin -1){
+
+                canv.black_count++;
+                p1.x = p1.x_start;
+                p1.y = p1.y_start;
+                p2.x = p2.x_start;
+                p2.y = p2.y_start;
+                ball.x = ball.x_start;
+                ball.y = ball.y_start;
+                ball.left_collision = ball.right_collision = ball.up_collision = ball.down_collision = false;
+                ball.speed = 0;
+            }
+
+        }
+
+        function render(){
+			//Limpa a tela
+			ctx.clearRect(0,0,cnv.width,cnv.height);
+
+            ctx.strokeStyle = 'black';
+            ctx.strokeRect(20,20,canv.width - (canv.rect * 2),canv.height - (canv.rect * 2));
+            
+            ctx.fillStyle = "#013220";
+            ctx.fillRect(0,canv.goal_margin,canv.rect,canv.goal);
+            ctx.fillRect(canv.width-canv.rect,canv.goal_margin,canv.rect,canv.goal);
+
+            ctx.fillStyle = 'black';
+			ctx.fillRect(p2.x,p2.y,p2.width,p2.height);
+
+            ctx.fillStyle = 'red';
+			ctx.fillRect(p1.x,p1.y,p1.width,p1.height);
+
+            ctx.fillStyle = 'white';
+			ctx.fillRect(ball.x,ball.y,ball.width,ball.height);
+
+            redGenerator();
+            collision();
+            
+		}
+
+        function move(){
+
+			if(moveCima){
+                p1.y_old = p1.y;
+                p1.y -= p1.speed;
+            }
+
+			if(moveEsquerda){
+                p1.x_old = p1.x;
+                p1.x -= p1.speed;
+            }
+
+            if(moveDireita){
+                p1.x_old = p1.x;
+                p1.x += p1.speed;
+            }
+
+            if(moveBaixo){
+                p1.y_old = p1.y;
+                p1.y += p1.speed;
+            }
+//-----------------------------------------------
+            if(moveCima2){
+                p2.y_old = p2.y;
+                p2.y -= p2.speed;
+            }
+
+			if(moveEsquerda2){
+                p2.x_old = p2.x;
+                p2.x -= p2.speed;
+            }
+
+            if(moveDireita2){
+                p2.x_old = p2.x;
+                p2.x += p2.speed;
+            }
+
+            if(moveBaixo2){
+                p2.y_old = p2.y;
+                p2.y += p2.speed;
+            }
+
+		}
+
+    </script>
+    
+</body>
+</html>
