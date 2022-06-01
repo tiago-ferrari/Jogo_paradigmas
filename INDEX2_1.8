@@ -50,8 +50,8 @@
         };
         
 
-        var UP = 38, DOWN = 40, LEFT = 37, RIGHT = 39, RUN = 32;
-        var UP2 = 87, DOWN2 = 83, LEFT2 = 65, RIGHT2 = 68, RUN2 = 51;
+        var UP = 38, DOWN = 40, LEFT = 37, RIGHT = 39;
+        var UP2 = 87, DOWN2 = 83, LEFT2 = 65, RIGHT2 = 68;
         var moveEsquerda = false, moveDireita = false, moveCima = false, moveBaixo = false, moveRun = false;
         var moveEsquerda2 = false, moveDireita2 = false, moveCima2 = false, moveBaixo2 = false, moveRun2 = false;
         var cnv = document.querySelector("canvas");
@@ -130,10 +130,6 @@
 				moveBaixo = true;
 			}
 
-            if(key === RUN){
-                moveRun = true;
-            }
-
             if(key === LEFT2 && key !== RIGHT2){
                 moveEsquerda2 = true;
             }
@@ -150,10 +146,6 @@
 				moveBaixo2 = true;
 			}
 
-            if(key === RUN2){
-                moveRun2 = true;
-        
-            }
 		}
 
 		
@@ -177,9 +169,6 @@
 				moveBaixo = false;
 			}
 
-            if(key === RUN){
-                moveRun = false;
-            }
 //----------------------------------------------------
             if(key === LEFT2 && key !== RIGHT2){
 				moveEsquerda2 = false;
@@ -196,10 +185,6 @@
 			if(key === DOWN2 && key !== UP2){
 				moveBaixo2 = false;
 			}
-
-            if(key === RUN2){
-                moveRun2 = false;
-            }
             
 		}
 
@@ -483,18 +468,6 @@
 
         function move(){
 
-            if(moveRun){
-                console.log("here");
-                p1.speed = 13;
-                //moveRun = false;
-            }
-
-            if(moveRun2){
-                console.log("here2");
-                p2.speed = 30;
-            }
-
-
 			if(moveCima){
                 p1.y_old = p1.y;
                 p1.y -= p1.speed;
@@ -535,7 +508,7 @@
                 p2.y += p2.speed;
             }
 
-            p1.speed = 8;
+            //p1.speed = 8;
 
 		}
 
