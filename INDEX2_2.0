@@ -61,7 +61,8 @@
             goal_margin: 166,           // goal + (goal_margin * 2) PRECISA SER IGUAL A canv.height
             goal: 166,
             black_count: 0,
-            red_count: 0
+            red_count: 0,
+            freeze_movement: false
         };
         
         var UP = 38, DOWN = 40, LEFT = 37, RIGHT = 39, RUN = 99;
@@ -472,6 +473,8 @@
                 ball.speed = 0;
                 p1.stamina = p1.stamina_start;
                 p2.stamina = p2.stamina_start;
+                canv.freeze_movement = true;
+                countdown();
             }
 
             if(ball.x > canv.width - canv.rect * 2 && ball.y > canv.goal_margin + 1 && ball.y < canv.height - canv.goal_margin -1 && 
@@ -488,8 +491,17 @@
                 ball.speed = 0;
                 p1.stamina = p1.stamina_start;
                 p2.stamina = p2.stamina_start;
+                canv.freeze_movement = true;
+                countdown();
             }
 
+        }
+
+        function countdown(){
+            
+            ctx.font = "30px Arial";
+            ctx.strokeText(3,20,50);     
+            
         }
 
         function render(){
@@ -532,6 +544,10 @@
 		}
 
         function move(){
+
+            //if(canv.freeze_movement){
+            //   return;
+            //}
 
             if(moveRun){
                 if(p1.stamina - p1.stamina_decrease > 0){
